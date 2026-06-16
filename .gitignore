@@ -1,0 +1,17 @@
+# Virtual environment
+.venv/
+
+# Local secrets for tool testing (never commit)
+**/.env
+**/.globals
+
+# Run logs (state snapshots and artifacts are kept; logs are not)
+.cursor/runs/*/logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# OS
+.DS_Store
