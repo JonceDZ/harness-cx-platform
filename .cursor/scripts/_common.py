@@ -36,6 +36,16 @@ def runs_dir() -> Path:
     return project_root() / ".cursor" / "runs"
 
 
+def agent_dir() -> Path:
+    """Return the workspace directory that holds the generated agent code.
+
+    The agent lives in its own folder at the same level as .cursor so its code
+    stays isolated from the harness config. Running `weni project push` from this
+    folder uploads only the agent to CX Platform.
+    """
+    return project_root() / "agent"
+
+
 def venv_bin(name: str) -> Path:
     """Return the path to an executable inside the project virtual environment."""
     bin_dir = "Scripts" if os.name == "nt" else "bin"

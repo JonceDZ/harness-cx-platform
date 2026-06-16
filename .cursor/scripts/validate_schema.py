@@ -25,7 +25,7 @@ except ImportError:
     raise SystemExit(2)
 
 # Local
-from _common import project_root
+from _common import agent_dir
 
 LEGACY_RESPONSES = (
     "AttachmentResponse",
@@ -117,7 +117,7 @@ def main() -> None:
     parser.add_argument("--file", default="agent_definition.yaml", help="Definition file path.")
     args = parser.parse_args()
 
-    root = project_root()
+    root = agent_dir()
     definition_path = (root / args.file) if not Path(args.file).is_absolute() else Path(args.file)
     if not definition_path.exists():
         print(f"Definition file not found: {definition_path}", file=sys.stderr)

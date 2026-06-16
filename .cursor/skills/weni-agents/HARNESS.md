@@ -38,7 +38,14 @@ AGENTS.md                          # orchestrator instructions (main session)
     _common.py
   templates/STATE.template.md
   runs/<run-id>/STATE.md, artifacts/, logs/
+agent/                             # generated agent code (isolated from harness)
+  agent_definition.yaml  requirements.txt  agent_evaluation.yml  README.md
+  tools/<tool_name>/main.py, requirements.txt, test_definition.yaml, .env, .globals
 ```
+
+The agent lives in `agent/` at the same level as `.cursor` so its code stays
+separate from the harness config. The repo tracks both, but you push only the agent
+to CX Platform by running `weni project push` from inside `agent/`.
 
 ## Getting started
 
@@ -77,14 +84,14 @@ STATE.md and continues from the first phase that is `pending` or `in-progress`.
 ## Models
 
 The orchestrator model is your choice (model picker). Subagent models are set per
-file: planner and reviewer use Opus (high-leverage reasoning), implementer and
-tester use Composer 2.5 (fast coding and tool use), docs-writer uses Sonnet 4.6.
-Adjust the `model` field in each `.cursor/agents/*.md` if your plan exposes
-different model IDs.
+file: the planner uses Opus (high-leverage reasoning), implementer, tester, and
+reviewer use Composer 2.5 (fast coding and tool use), docs-writer uses Gemini 3
+Flash (low-cost documentation). Adjust the `model` field in each
+`.cursor/agents/*.md` if your plan exposes different model IDs.
 
 ## Conventions
 
 - Everything generated is in English, including the agent's end-user messages,
   unless you explicitly ask otherwise.
 - Per-tool dependency file is `requirements.txt`.
-- Secrets for local tests live in git-ignored `tools/<tool>/.env` and `.globals`.
+- Secrets for local tests live in git-ignored `agent/tools/<tool>/.env` and `.globals`.

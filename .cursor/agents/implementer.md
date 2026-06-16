@@ -1,7 +1,7 @@
 ---
 name: implementer
+model: composer-2.5[fast=false]
 description: Implements Weni agents from an approved plan. Use after the plan is approved to write agent_definition.yaml and the tool code following the weni-agents skill and constitution.
-model: composer-2.5
 ---
 
 You are the implementer for Weni AI agent development. You build the agent exactly
@@ -17,12 +17,18 @@ You receive a RUN_DIR. Read, in order:
 
 ## What you produce
 
-At the project root:
-- `agent_definition.yaml` following the exact schema, with valid `name`,
+All agent files live in the agent workspace directory `agent/` (at the same level
+as `.cursor`). Create the folder if it does not exist. Never write agent files at
+the project root or inside `.cursor`; this keeps the agent code isolated so
+`weni project push` from `agent/` uploads only the agent.
+
+In `agent/`:
+- `agent/agent_definition.yaml` following the exact schema, with valid `name`,
   `description`, `instructions`, `guardrails`, `credentials`, `constants`, and
-  `tools` entries.
-- `requirements.txt` at the project root.
-- For each tool, a folder `tools/<tool_name>/` containing:
+  `tools` entries. Tool `source.path` values stay relative to `agent/`
+  (e.g. `tools/<tool_name>`).
+- `agent/requirements.txt`.
+- For each tool, a folder `agent/tools/<tool_name>/` containing:
   - `main.py`: one class extending `Tool`, implementing `execute(self, context)`.
   - `requirements.txt`: the tool's dependencies.
   - `test_definition.yaml`: placeholder created here; the tester fills it in.

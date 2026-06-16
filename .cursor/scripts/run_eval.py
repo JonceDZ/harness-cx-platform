@@ -16,7 +16,7 @@ from datetime import datetime
 from pathlib import Path
 
 # Local
-from _common import latest_open_run, project_root, venv_bin
+from _common import agent_dir, latest_open_run, venv_bin
 
 
 def resolve_run_dir(args: argparse.Namespace) -> Path:
@@ -49,7 +49,7 @@ def main() -> None:
     if args.verbose:
         command += ["--verbose"]
 
-    result = subprocess.run(command, cwd=str(project_root()), capture_output=True, text=True)
+    result = subprocess.run(command, cwd=str(agent_dir()), capture_output=True, text=True)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     output = result.stdout + ("\n" + result.stderr if result.stderr else "")
     status = "PASS" if result.returncode == 0 else "FAIL"

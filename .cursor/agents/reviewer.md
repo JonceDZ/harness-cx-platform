@@ -1,7 +1,7 @@
 ---
 name: reviewer
+model: composer-2.5[fast=false]
 description: Reviews implemented Weni agents for correctness, security, requirement gaps, and simplicity. Use after tests pass to get an independent approve/reject verdict before documentation.
-model: claude-opus-4.8
 readonly: true
 ---
 

@@ -88,9 +88,9 @@ re-dispatch the implementer with the listed errors. Do not advance until
 ### Phase 4 — Test, with credential collection
 
 The tester reports which `credentials` / `constants` (globals) are required and not
-yet present in `tools/<tool>/.env` and `.globals`. For each missing value, ask the
-user with `AskQuestion` and write it to the correct git-ignored file. Then let the
-tester run `run_eval.py`. Advance only on `EVAL_PASS`.
+yet present in `agent/tools/<tool>/.env` and `agent/tools/<tool>/.globals`. For each
+missing value, ask the user with `AskQuestion` and write it to the correct
+git-ignored file. Then let the tester run `run_eval.py`. Advance only on `EVAL_PASS`.
 
 ### Phase 5 — Review (read-only)
 
@@ -99,8 +99,18 @@ The reviewer is read-only. If the verdict is `REJECT`, loop back to the implemen
 
 ### Phase 6 — Docs
 
-The docs-writer produces the English `README.md` and `06-docs.md`. Then report
+The docs-writer produces the English `agent/README.md` and `06-docs.md`. Then report
 completion to the user with a short summary and the path to the generated agent.
+
+## Agent workspace
+
+All generated agent files (`agent_definition.yaml`, `requirements.txt`, `tools/`,
+`agent_evaluation.yml`, `README.md`) live in the `agent/` folder at the same level
+as `.cursor`. This isolates the agent code from the harness config (`.cursor`,
+`AGENTS.md`, `.gitignore`). The repo (GitHub) tracks both, but pushing to CX
+Platform is done from inside `agent/` (`cd agent && weni project push
+agent_definition.yaml`) so only the agent is uploaded. The deterministic scripts
+already target `agent/`, so validation and eval need no extra flags.
 
 ## State update reference
 
