@@ -12,7 +12,7 @@ You  <->  Orchestrator (main session, AGENTS.md, your chosen model)
               |
               |  one phase at a time, passing only the RUN_DIR
               v
-   planner -> implementer -> tester -> reviewer -> docs-writer
+   planner → implementer → tester → reviewer → docs-writer
               |
               v
    .cursor/runs/<run-id>/  (STATE.md + artifacts/ + logs/)
@@ -67,11 +67,12 @@ to CX Platform by running `weni project push` from inside `agent/`.
 
 | Phase | Subagent | Gate to advance |
 |-------|----------|-----------------|
-| Plan | planner | You approve the plan |
-| Implement | implementer | `validate_schema.py` -> `SCHEMA_VALID` |
-| Test | tester | `run_eval.py` -> `EVAL_PASS` |
-| Review | reviewer | Verdict `APPROVE` (read-only) |
-| Docs | docs-writer | README written |
+| 0 Intake | orchestrator | Requirements captured |
+| 1 Plan | planner | User approves the plan |
+| 2 Implement | implementer | `validate_schema.py` -> `SCHEMA_VALID` |
+| 3 Test | tester | User confirms + `run_eval.py` -> `EVAL_PASS` |
+| 4 Review | reviewer | Verdict `APPROVE` (read-only) |
+| 5 Docs | docs-writer | README written |
 
 The pipeline stops at Docs. It never deploys (`weni project push`).
 

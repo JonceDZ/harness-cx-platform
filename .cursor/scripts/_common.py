@@ -14,12 +14,11 @@ from pathlib import Path
 
 PHASES = [
     {"num": "00", "key": "intake", "name": "Intake", "agent": "orchestrator", "artifact": "00-intake.md", "optional": False},
-    {"num": "01", "key": "explore", "name": "Explore", "agent": "explorer", "artifact": "01-exploration.md", "optional": True},
-    {"num": "02", "key": "plan", "name": "Plan", "agent": "planner", "artifact": "02-plan.md", "optional": False},
-    {"num": "03", "key": "implement", "name": "Implement", "agent": "implementer", "artifact": "03-implementation.md", "optional": False},
-    {"num": "04", "key": "test", "name": "Test", "agent": "tester", "artifact": "04-tests.md", "optional": False},
-    {"num": "05", "key": "review", "name": "Review", "agent": "reviewer", "artifact": "05-review.md", "optional": False},
-    {"num": "06", "key": "docs", "name": "Docs", "agent": "docs-writer", "artifact": "06-docs.md", "optional": False},
+    {"num": "01", "key": "plan", "name": "Plan", "agent": "planner", "artifact": "01-plan.md", "optional": False},
+    {"num": "02", "key": "implement", "name": "Implement", "agent": "implementer", "artifact": "02-implementation.md", "optional": False},
+    {"num": "03", "key": "test", "name": "Test", "agent": "tester", "artifact": "03-tests.md", "optional": False},
+    {"num": "04", "key": "review", "name": "Review", "agent": "reviewer", "artifact": "04-review.md", "optional": False},
+    {"num": "05", "key": "docs", "name": "Docs", "agent": "docs-writer", "artifact": "05-docs.md", "optional": False},
 ]
 
 VALID_STATUSES = ("pending", "in-progress", "done", "failed", "skipped")

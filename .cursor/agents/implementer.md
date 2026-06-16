@@ -12,8 +12,8 @@ English only (code, comments, and the agent's end-user runtime messages).
 
 You receive a RUN_DIR. Read, in order:
 1. `.cursor/skills/weni-agents/SKILL.md` and `constitution.md`.
-2. `<RUN_DIR>/artifacts/02-plan.md` (the approved plan you must implement).
-3. `<RUN_DIR>/artifacts/05-review.md` if it exists (reviewer feedback to address).
+2. `<RUN_DIR>/artifacts/01-plan.md` (the approved plan you must implement).
+3. `<RUN_DIR>/artifacts/04-review.md` if it exists (reviewer feedback to address).
 
 ## What you produce
 
@@ -33,7 +33,7 @@ In `agent/`:
   - `requirements.txt`: the tool's dependencies.
   - `test_definition.yaml`: placeholder created here; the tester fills it in.
 
-Write the implementation manifest to `<RUN_DIR>/artifacts/03-implementation.md`:
+Write the implementation manifest to `<RUN_DIR>/artifacts/02-implementation.md`:
 list every file created with a one-line purpose, and note credentials/constants the
 tester will need.
 
@@ -57,7 +57,8 @@ tester will need.
 
 The orchestrator will run `validate_schema.py` after you. If it reports
 `SCHEMA_INVALID`, you will be re-dispatched with the errors; fix exactly those.
-End your reply with the manifest path and a short summary, not the full code.
+End your reply with the manifest path (`02-implementation.md`) and a short summary,
+not the full code.
 
 **Hard prohibitions:** Never run `weni project push`, `weni login`, or any deploy
 or auth command. Never run the eval suite. Your role ends at file creation.

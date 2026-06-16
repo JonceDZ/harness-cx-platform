@@ -13,8 +13,8 @@ in English only.
 You receive a RUN_DIR. Read, in order:
 1. `.cursor/skills/weni-agents/SKILL.md` (the "Agent Evaluation" and "Project
    Bootstrap and Auth" sections) and `constitution.md`.
-2. `<RUN_DIR>/artifacts/02-plan.md` (evaluation scenarios) and
-   `<RUN_DIR>/artifacts/03-implementation.md` (files + required secrets).
+2. `<RUN_DIR>/artifacts/01-plan.md` (evaluation scenarios) and
+   `<RUN_DIR>/artifacts/02-implementation.md` (files + required secrets).
 
 ## What you produce
 
@@ -23,7 +23,11 @@ You receive a RUN_DIR. Read, in order:
 - `agent/agent_evaluation.yml`, implementing the plan's scenarios
   (`steps` + `expected_results`). Use `weni eval init` as a starting scaffold if
   none exists.
-- The results artifact `<RUN_DIR>/artifacts/04-tests.md` (written by `run_eval.py`).
+- The orchestrator may run `run_tool_tests.py` before the full eval to execute
+  `weni run agent_definition.yaml <agent> <tool> -v` for each tool; verbose output
+  is saved to `agent/test-results.md`. This is separate from the eval.
+- The eval results artifact `<RUN_DIR>/artifacts/03-tests.md` is written by
+  `run_eval.py` (orchestrator runs it after user confirmation).
 
 ## Credential collection (do not ask the user yourself)
 
@@ -50,7 +54,7 @@ which executes `weni eval run` inside `.venv` and captures output to
 
 The gate to advance is `EVAL_PASS` with results that genuinely make sense. End your
 reply with: the list of test files written, the eval status, and any concerns. Do
-not paste full logs; they live in `04-tests.md` and `logs/`.
+not paste full logs; they live in `03-tests.md` and `logs/`.
 
 **Hard prohibitions:** Never run `weni project push`, `weni login`, or any deploy
 or auth command. The orchestrator runs `run_eval.py` after getting user confirmation;

@@ -62,18 +62,14 @@ def main() -> None:
         f"## Output\n\n```\n{output.strip()}\n```\n"
     )
 
-    artifact = Path(run_dir) / "artifacts" / "04-tests.md"
+    artifact = Path(run_dir) / "artifacts" / "03-tests.md"
     artifact.write_text(report_content, encoding="utf-8")
 
-    agent_results = agent_dir() / "test-results.md"
-    agent_results.write_text(report_content, encoding="utf-8")
-
-    log_file = Path(run_dir) / "logs" / "04-test-tester.log"
+    log_file = Path(run_dir) / "logs" / "03-test-tester.log"
     log_file.write_text(output, encoding="utf-8")
 
     print(f"EVAL_{status}")
     print(f"Artifact: {artifact}")
-    print(f"Agent copy: {agent_results}")
     raise SystemExit(result.returncode)
 
 

@@ -13,9 +13,9 @@ in English only.
 
 You receive a RUN_DIR. Read:
 1. `.cursor/skills/weni-agents/SKILL.md` and `constitution.md`.
-2. `<RUN_DIR>/artifacts/02-plan.md` (what was asked).
-3. `<RUN_DIR>/artifacts/03-implementation.md` and the actual files it lists.
-4. `<RUN_DIR>/artifacts/04-tests.md` (test results).
+2. `<RUN_DIR>/artifacts/01-plan.md` (what was asked).
+3. `<RUN_DIR>/artifacts/02-implementation.md` and the actual files it lists.
+4. `<RUN_DIR>/artifacts/03-tests.md` (test results).
 
 ## What to check
 
@@ -31,7 +31,7 @@ You receive a RUN_DIR. Read:
 - Constitution compliance. Only TextResponse/FinalResponse, char limits,
   `event_name` always `weni_nexus_data`, correct auth headers, PEP 8.
 
-## Output (write to `<RUN_DIR>/artifacts/05-review.md`)
+## Output (write to `<RUN_DIR>/artifacts/04-review.md`)
 
 - A verdict line: `VERDICT: APPROVE` or `VERDICT: REJECT`.
 - Findings grouped by severity:
@@ -43,5 +43,6 @@ You receive a RUN_DIR. Read:
 
 ## Handoff
 
-End your reply with the verdict and the artifact path. If `REJECT`, the orchestrator
-loops back to the implementer with your findings. Never edit files yourself.
+End your reply with the verdict and the artifact path (`04-review.md`). If `REJECT`,
+the orchestrator loops back to the implementer with your findings. Never edit files
+yourself.

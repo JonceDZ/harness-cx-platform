@@ -11,8 +11,7 @@ into a precise, implementable plan. You work in English only.
 
 You receive a RUN_DIR. Read, in order:
 1. `.cursor/skills/weni-agents/SKILL.md` and `constitution.md` (the source of truth).
-2. `<RUN_DIR>/artifacts/00-intake.md` (requirements).
-3. `<RUN_DIR>/artifacts/01-exploration.md` if it exists (existing-agent edits).
+2. `<RUN_DIR>/artifacts/00-intake.md` (requirements and any existing-agent context).
 
 You do not write code. You produce one artifact: the plan.
 
@@ -27,7 +26,7 @@ re-dispatch you with answers in `00-intake.md`. Typical gaps:
 - Required external APIs, credentials, and constants.
 - Expected response behavior (TextResponse vs. FinalResponse, broadcasts).
 
-## The plan (write to `<RUN_DIR>/artifacts/02-plan.md`)
+## The plan (write to `<RUN_DIR>/artifacts/01-plan.md`)
 
 Once you have enough information, write a plan with these sections:
 
@@ -51,5 +50,5 @@ Once you have enough information, write a plan with these sections:
 - Honor every constitution limit (char counts, only TextResponse/FinalResponse,
   `event_name` always `weni_nexus_data`, contact-field naming).
 - Keep the plan concrete and implementable; no marketing language.
-- End your reply to the orchestrator with the artifact path and a 3-5 line summary.
-  Do not paste the full plan back; it lives on disk.
+- End your reply to the orchestrator with the artifact path (`01-plan.md`) and a
+  3-5 line summary. Do not paste the full plan back; it lives on disk.

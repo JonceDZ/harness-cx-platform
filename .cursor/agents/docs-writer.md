@@ -10,15 +10,15 @@ concise English README for the finished agent. You work in English only.
 ## Inputs
 
 You receive a RUN_DIR. Read:
-1. `<RUN_DIR>/artifacts/02-plan.md` (purpose and design).
-2. `<RUN_DIR>/artifacts/03-implementation.md` (files and tools).
-3. `<RUN_DIR>/artifacts/04-tests.md` and `05-review.md` (verified behavior).
+1. `<RUN_DIR>/artifacts/01-plan.md` (purpose and design).
+2. `<RUN_DIR>/artifacts/02-implementation.md` (files and tools).
+3. `<RUN_DIR>/artifacts/03-tests.md` and `04-review.md` (verified behavior).
 4. The actual `agent/agent_definition.yaml` for the authoritative configuration.
 
 ## What you produce
 
 A `agent/README.md` (inside the agent workspace directory, at the same level as
-`.cursor`) and a summary at `<RUN_DIR>/artifacts/06-docs.md`. Keep it
+`.cursor`) and a summary at `<RUN_DIR>/artifacts/05-docs.md`. Keep it
 concrete: include all relevant information, no filler. The README must cover:
 
 1. Agent name and one-paragraph purpose (what it does, when the Manager invokes it).

@@ -56,12 +56,11 @@ artifact path. On any rejection or failure, loop back as noted.
 | Phase | Subagent | Artifact | Gate to advance |
 |-------|----------|----------|-----------------|
 | 0 Intake | you (orchestrator) | `00-intake.md` | Requirements captured |
-| 1 Explore (optional) | explorer | `01-exploration.md` | Only for edits to an existing agent; otherwise mark `skipped` |
-| 2 Plan | planner | `02-plan.md` | User approves the plan |
-| 3 Implement | implementer | `03-implementation.md` | `validate_schema.py` returns `SCHEMA_VALID` |
-| 4 Test | tester | `04-tests.md` | `run_eval.py` returns `EVAL_PASS` |
-| 5 Review | reviewer | `05-review.md` | Verdict is `APPROVE` |
-| 6 Docs | docs-writer | `06-docs.md` + `README.md` | README written |
+| 1 Plan | planner | `01-plan.md` | User approves the plan |
+| 2 Implement | implementer | `02-implementation.md` | `validate_schema.py` returns `SCHEMA_VALID` |
+| 3 Test | tester | `03-tests.md` | `run_eval.py` returns `EVAL_PASS` |
+| 4 Review | reviewer | `04-review.md` | Verdict is `APPROVE` |
+| 5 Docs | docs-writer | `05-docs.md` + `README.md` | README written |
 
 The pipeline stops at Docs. This harness does NOT deploy (`weni project push`).
 
@@ -69,43 +68,51 @@ The pipeline stops at Docs. This harness does NOT deploy (`weni project push`).
 
 Capture the request in `00-intake.md`: goal, scope (new agent vs. edit), target
 channels, whether the project uses the Retail Setup proxy or direct VTEX
-credentials, and any constraints. Use `AskQuestion` for anything ambiguous.
+credentials, and any constraints. Use `AskQuestion` for anything ambiguous. If the
+user is editing an existing agent, read the relevant files from `agent/` yourself
+and include the current structure as context in `00-intake.md`.
 
-### Phase 2 — Plan (planner, always asks)
+### Phase 1 — Plan (planner, always asks)
 
 Dispatch the planner. If it returns open questions, relay them to the user with
 `AskQuestion`, write the answers into `00-intake.md`, and re-dispatch the planner.
-Present the final `02-plan.md` to the user and get explicit approval before
+Present the final `01-plan.md` to the user and get explicit approval before
 implementing.
 
-### Phase 3 — Implement, then validate
+### Phase 2 — Implement, then validate
 
 After the implementer writes files, run
 `python .cursor/scripts/validate_schema.py`. If it returns `SCHEMA_INVALID`,
 re-dispatch the implementer with the listed errors. Do not advance until
 `SCHEMA_VALID`.
 
-### Phase 4 — Test, with credential collection
+### Phase 3 — Test, with credential collection
 
 The tester reports which `credentials` / `constants` (globals) are required and not
 yet present in `agent/tools/<tool>/.env` and `agent/tools/<tool>/.globals`. For each
 missing value, ask the user with `AskQuestion` and write it to the correct
 git-ignored file.
 
+**Local tool tests (optional, before full eval):** You may run individual tool tests
+using `python .cursor/scripts/run_tool_tests.py`. This runs
+`weni run agent_definition.yaml <agent> <tool> -v` for every tool and saves the
+verbose terminal output to `agent/test-results.md`. Use `--tool <key>` to test a
+single tool.
+
 **Eval gate (mandatory):** Before running `run_eval.py`, ask the user with
 `AskQuestion`: "The agent is implemented and validated. Do you want to run the local
 evaluation now?" Only proceed if the user confirms. If they decline, pause and wait
-for their instruction. Results are stored in `<RUN_DIR>/artifacts/04-tests.md` and
-copied to `agent/test-results.md`. Advance only on `EVAL_PASS`.
+for their instruction. Eval results are stored in `<RUN_DIR>/artifacts/03-tests.md`.
+Advance only on `EVAL_PASS`.
 
-### Phase 5 — Review (read-only)
+### Phase 4 — Review (read-only)
 
 The reviewer is read-only. If the verdict is `REJECT`, loop back to the implementer
-(Phase 3) with the findings, then re-run validate and test before reviewing again.
+(Phase 2) with the findings, then re-run validate and test before reviewing again.
 
-### Phase 6 — Docs
+### Phase 5 — Docs
 
-The docs-writer produces the English `agent/README.md` and `06-docs.md`. Then report
+The docs-writer produces the English `agent/README.md` and `05-docs.md`. Then report
 completion to the user with a short summary and the path to the generated agent.
 
 ## Agent workspace
