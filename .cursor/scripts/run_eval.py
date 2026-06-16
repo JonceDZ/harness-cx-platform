@@ -54,21 +54,26 @@ def main() -> None:
     output = result.stdout + ("\n" + result.stderr if result.stderr else "")
     status = "PASS" if result.returncode == 0 else "FAIL"
 
-    artifact = Path(run_dir) / "artifacts" / "04-tests.md"
-    artifact.write_text(
+    report_content = (
         f"# Test Results\n\n"
         f"Command: `{' '.join(command)}`\n"
         f"Run at: {timestamp}\n"
         f"Status: {status} (exit code {result.returncode})\n\n"
-        f"## Output\n\n```\n{output.strip()}\n```\n",
-        encoding="utf-8",
+        f"## Output\n\n```\n{output.strip()}\n```\n"
     )
+
+    artifact = Path(run_dir) / "artifacts" / "04-tests.md"
+    artifact.write_text(report_content, encoding="utf-8")
+
+    agent_results = agent_dir() / "test-results.md"
+    agent_results.write_text(report_content, encoding="utf-8")
 
     log_file = Path(run_dir) / "logs" / "04-test-tester.log"
     log_file.write_text(output, encoding="utf-8")
 
     print(f"EVAL_{status}")
     print(f"Artifact: {artifact}")
+    print(f"Agent copy: {agent_results}")
     raise SystemExit(result.returncode)
 
 

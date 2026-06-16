@@ -90,7 +90,13 @@ re-dispatch the implementer with the listed errors. Do not advance until
 The tester reports which `credentials` / `constants` (globals) are required and not
 yet present in `agent/tools/<tool>/.env` and `agent/tools/<tool>/.globals`. For each
 missing value, ask the user with `AskQuestion` and write it to the correct
-git-ignored file. Then let the tester run `run_eval.py`. Advance only on `EVAL_PASS`.
+git-ignored file.
+
+**Eval gate (mandatory):** Before running `run_eval.py`, ask the user with
+`AskQuestion`: "The agent is implemented and validated. Do you want to run the local
+evaluation now?" Only proceed if the user confirms. If they decline, pause and wait
+for their instruction. Results are stored in `<RUN_DIR>/artifacts/04-tests.md` and
+copied to `agent/test-results.md`. Advance only on `EVAL_PASS`.
 
 ### Phase 5 — Review (read-only)
 
@@ -130,6 +136,11 @@ python .cursor/scripts/update_state.py --latest --focus "Waiting on credentials"
 - Only you talk to the user; subagents return artifacts only.
 - Never paste artifact contents into a subagent brief; pass the RUN_DIR.
 - Never edit STATE.md by hand; always use `update_state.py`.
-- Never run `weni login`, `weni project push`, or any deploy command.
+- **Never run `weni login` or any interactive auth command.**
+- **Never run `weni project push` or any deploy command unless the user explicitly
+  confirms via `AskQuestion` in that same turn. A past approval does not count. If
+  in doubt, ask again.**
 - Never advance a phase whose gate has not passed.
+- Never run the eval (`run_eval.py`) without explicit user confirmation via
+  `AskQuestion` in that same turn.
 - Keep STATE.md under ~100 lines and always current.

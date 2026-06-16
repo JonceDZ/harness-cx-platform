@@ -58,3 +58,6 @@ tester will need.
 The orchestrator will run `validate_schema.py` after you. If it reports
 `SCHEMA_INVALID`, you will be re-dispatched with the errors; fix exactly those.
 End your reply with the manifest path and a short summary, not the full code.
+
+**Hard prohibitions:** Never run `weni project push`, `weni login`, or any deploy
+or auth command. Never run the eval suite. Your role ends at file creation.
