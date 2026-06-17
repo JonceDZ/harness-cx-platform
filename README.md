@@ -55,7 +55,6 @@ your-project/
         └── .globals      # git-ignored constants for local tests
 ```
 
-- **GitHub** can track both the harness and `agent/`.
 - **CX Platform** — push only the agent: `cd agent && weni project push agent_definition.yaml`. The harness files (`.cursor`, `AGENTS.md`, etc.) are not uploaded.
 
 ## Pipeline
