@@ -93,11 +93,12 @@ yet present in `agent/tools/<tool>/.env` and `agent/tools/<tool>/.globals`. For 
 missing value, ask the user with `AskQuestion` and write it to the correct
 git-ignored file.
 
-**Local tool tests (optional, before full eval):** You may run individual tool tests
-using `python .cursor/scripts/run_tool_tests.py`. This runs
-`weni run agent_definition.yaml <agent> <tool> -v` for every tool and saves the
-verbose terminal output to `agent/test-results.md`. Use `--tool <key>` to test a
-single tool.
+**Local tool tests (mandatory, before full eval):** ALWAYS run
+`python .cursor/scripts/run_tool_tests.py` before running `run_eval.py`. This is
+not optional. It runs `weni run agent_definition.yaml <agent> <tool> -v` for every
+tool and saves the verbose terminal output to `agent/test-results.md`. Never use
+`weni run` directly from the terminal as a substitute — the script is the only
+accepted method. Use `--tool <key>` to test a single tool.
 
 **Eval gate (mandatory):** Before running `run_eval.py`, ask the user with
 `AskQuestion`: "The agent is implemented and validated. Do you want to run the local
@@ -151,3 +152,6 @@ python .cursor/scripts/update_state.py --latest --focus "Waiting on credentials"
 - Never run the eval (`run_eval.py`) without explicit user confirmation via
   `AskQuestion` in that same turn.
 - Keep STATE.md under ~100 lines and always current.
+- **Always run `run_tool_tests.py` before `run_eval.py`.** Never substitute a
+  direct `weni run` terminal call. The script is mandatory and produces the
+  required `agent/test-results.md` artifact.
