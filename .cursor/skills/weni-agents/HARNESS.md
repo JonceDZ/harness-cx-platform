@@ -76,9 +76,15 @@ targets one collaborator (`--target <slug>`, auto-detected when there is only on
 | 2 Implement | implementer | `validate_schema.py` -> `SCHEMA_VALID` |
 | 3 Test | tester | User confirms + `run_eval.py` -> `EVAL_PASS` |
 | 4 Review | reviewer | Verdict `APPROVE` (read-only) |
-| 5 Docs | docs-writer | README written |
+| 5 Docs | docs-writer | `agents/<slug>/README.md` written (with mermaid sequence diagram) |
 
 The pipeline stops at Docs. It never deploys (`weni project push`).
+
+Each collaborator README is lean (purpose, sequence diagram, tools, configuration,
+external integrations) and always includes a mermaid `sequenceDiagram` of its
+logic/API flow. The project-level root README is generated only on demand: the
+orchestrator collects project context and the docs-writer auto-fills it, leaving a
+mermaid `flowchart` placeholder for you to draw the high-level journey.
 
 ## Resuming
 

@@ -73,6 +73,10 @@ your-project/
 
 Artifacts live under `.cursor/runs/<run-id>/artifacts/`. The orchestrator resumes unfinished runs automatically.
 
+**Documentation produced:**
+- **Per agent (always, in Docs):** `agents/<slug>/README.md` — five lean sections with a mandatory mermaid `sequenceDiagram` of the agent's logic/API flow.
+- **Project README (on demand):** ask the orchestrator to generate the root `README.md`. It collects project context from you and auto-fills the skeleton (overview, collaborators, setup, deploy), leaving a mermaid `flowchart` placeholder for you to draw the high-level journey.
+
 **Gates you control:**
 - Plan must be approved before implementation.
 - `weni eval run` runs only if you confirm when asked.

@@ -147,8 +147,24 @@ The reviewer is read-only. If the verdict is `REJECT`, loop back to the implemen
 
 ### Phase 5 — Docs
 
-The docs-writer produces the English `agents/<slug>/README.md` and `05-docs.md`. Then report
+Dispatch the docs-writer in its default mode (collaborator README). It produces the
+English `agents/<slug>/README.md` — five lean sections with a MANDATORY mermaid
+`sequenceDiagram` of the agent's real logic/API flow — plus `05-docs.md`. Then report
 completion to the user with a short summary and the path to the generated agent.
+
+## On-demand: project README (root)
+
+This is NOT part of the per-run pipeline; run it only when the user explicitly asks
+for the project-level README (it replaces the harness README in a real project).
+
+1. Collect project context from the user with `AskQuestion`: project name, business
+   purpose, target channels, and any notes you need to fill real data (never invent).
+2. Gather the collaborator slugs (the subfolders under `agents/`).
+3. Dispatch the docs-writer in **project mode**, passing the collected context and the
+   collaborator list. It writes the root `README.md` with everything auto-filled
+   except the high-level `flowchart`, which it leaves as an empty placeholder for the
+   user to complete.
+4. Report the path and remind the user that the architecture flowchart is theirs to fill.
 
 ## Agent workspace
 
