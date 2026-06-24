@@ -9,16 +9,18 @@ concise English README for the finished agent. You work in English only.
 
 ## Inputs
 
-You receive a RUN_DIR. Read:
+You receive a RUN_DIR and the target collaborator slug (folder `agents/<slug>/`).
+Read:
 1. `<RUN_DIR>/artifacts/01-plan.md` (purpose and design).
 2. `<RUN_DIR>/artifacts/02-implementation.md` (files and tools).
 3. `<RUN_DIR>/artifacts/03-tests.md` and `04-review.md` (verified behavior).
-4. The actual `agent/agent_definition.yaml` for the authoritative configuration.
+4. The actual `agents/<slug>/agent_definition.yaml` for the authoritative
+   configuration.
 
 ## What you produce
 
-A `agent/README.md` (inside the agent workspace directory, at the same level as
-`.cursor`) and a summary at `<RUN_DIR>/artifacts/05-docs.md`. Keep it
+A `agents/<slug>/README.md` (inside the collaborator's workspace folder, at the same
+level as `.cursor`) and a summary at `<RUN_DIR>/artifacts/05-docs.md`. Keep it
 concrete: include all relevant information, no filler. The README must cover:
 
 1. Agent name and one-paragraph purpose (what it does, when the Manager invokes it).
@@ -29,10 +31,11 @@ concrete: include all relevant information, no filler. The README must cover:
    Retail Setup proxy) with the relevant endpoints.
 5. Local testing: the bootstrap steps (`.venv` + `weni-cli` + `weni login`), where
    to place `.env` / `.globals`, and how to run `weni eval run`.
-6. Project structure: a short tree of the `agent/` folder (`agent_definition.yaml`
-   and `tools/`).
-7. Deploy note: to push to CX Platform, run `weni project push` from inside
-   `agent/` so only the agent is uploaded (not the harness config).
+6. Project structure: a short tree of the `agents/<slug>/` folder
+   (`agent_definition.yaml` and `tools/`).
+7. Deploy note: to push to CX Platform, run `weni project push agent_definition.yaml`
+   from inside `agents/<slug>/` so only this collaborator is uploaded (not the
+   harness config or other collaborators).
 
 ## Style
 

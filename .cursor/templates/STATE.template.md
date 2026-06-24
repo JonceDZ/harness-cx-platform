@@ -1,7 +1,8 @@
 # Run State — <run-id>
 
 Feature: <one-line feature description>
-Mode: standard
+Target agent: <collaborator slug, folder agents/<slug>/>
+Mode: new
 Started: <YYYY-MM-DD HH:MM:SS> | Updated: <YYYY-MM-DD HH:MM:SS>
 Current phase: <n. Phase> | Checkpoint: <last checkpoint>
 

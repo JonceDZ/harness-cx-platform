@@ -1,14 +1,14 @@
-"""Run local tool tests with verbose output and save results to agent/test-results.md.
+"""Run local tool tests with verbose output and save results to agents/<slug>/test-results.md.
 
 Runs `weni run agent_definition.yaml <agent_name> <tool_name> -v` for every tool
 defined in the agent (or for a specific tool if --tool is given). Output is saved
-to `agent/test-results.md` so the results live alongside the agent code.
+to `agents/<slug>/test-results.md` so the results live alongside the agent code.
 
 This is distinct from `weni eval run`, which runs the full evaluation suite.
 
 Usage:
-    python .cursor/scripts/run_tool_tests.py
-    python .cursor/scripts/run_tool_tests.py --tool <tool_key>
+    python .cursor/scripts/run_tool_tests.py --target <slug>
+    python .cursor/scripts/run_tool_tests.py --target <slug> --tool <tool_key>
 """
 
 # Standard library
@@ -57,13 +57,18 @@ def run_tool(weni: Path, definition_file: str, agent_key: str, tool_key: str, cw
 
 
 def main() -> None:
-    """Run all tool tests and write results to agent/test-results.md."""
+    """Run all tool tests and write results to agents/<slug>/test-results.md."""
     parser = argparse.ArgumentParser(description="Run local weni tool tests and save verbose output.")
+    parser.add_argument(
+        "--target",
+        help="Collaborator slug to test (folder agents/<slug>/). "
+        "Optional when the project has a single agent.",
+    )
     parser.add_argument("--tool", help="Only test this tool key.")
-    parser.add_argument("--agent", help="Only test tools from this agent key.")
+    parser.add_argument("--agent", help="Only test tools from this agent key inside the definition.")
     args = parser.parse_args()
 
-    root = agent_dir()
+    root = agent_dir(args.target)
     definition_path = root / "agent_definition.yaml"
     if not definition_path.exists():
         raise SystemExit(f"agent_definition.yaml not found at {definition_path}")

@@ -35,14 +35,59 @@ def runs_dir() -> Path:
     return project_root() / ".cursor" / "runs"
 
 
-def agent_dir() -> Path:
-    """Return the workspace directory that holds the generated agent code.
+def agents_root() -> Path:
+    """Return the workspace directory that holds every collaborator agent.
 
-    The agent lives in its own folder at the same level as .cursor so its code
-    stays isolated from the harness config. Running `weni project push` from this
-    folder uploads only the agent to CX Platform.
+    Each collaborator lives in its own subfolder (`agents/<slug>/`) at the same
+    level as .cursor, with its own `agent_definition.yaml`, `tools/`, and eval.
+    A project with a single agent simply has one subfolder. This keeps the agent
+    code isolated from the harness config and lets `weni project push` run from a
+    single collaborator folder so only that agent is uploaded to CX Platform.
     """
-    return project_root() / "agent"
+    return project_root() / "agents"
+
+
+def list_agent_slugs() -> list[str]:
+    """Return the slugs of every collaborator folder that holds a definition."""
+    root = agents_root()
+    if not root.exists():
+        return []
+    slugs = [
+        path.name
+        for path in sorted(root.iterdir())
+        if path.is_dir() and (path / "agent_definition.yaml").exists()
+    ]
+    return slugs
+
+
+def resolve_agent_dir(slug: str | None = None) -> Path:
+    """Resolve a single collaborator folder under `agents/`.
+
+    With an explicit slug, return `agents/<slug>` (whether or not it exists yet,
+    so the implementer can create it). Without a slug, auto-detect when exactly
+    one collaborator exists; otherwise raise, asking the caller to pass --target.
+    """
+    if slug:
+        return agents_root() / slug
+
+    slugs = list_agent_slugs()
+    if len(slugs) == 1:
+        return agents_root() / slugs[0]
+    if not slugs:
+        raise SystemExit(
+            "No collaborator agent found under agents/. Pass --target <slug> "
+            "(the implementer creates agents/<slug>/ on first run)."
+        )
+    raise SystemExit(
+        "Multiple collaborator agents found under agents/: "
+        + ", ".join(slugs)
+        + ". Pass --target <slug> to select one."
+    )
+
+
+def agent_dir(slug: str | None = None) -> Path:
+    """Backward-compatible alias that resolves a single collaborator folder."""
+    return resolve_agent_dir(slug)
 
 
 def venv_bin(name: str) -> Path:
@@ -109,6 +154,7 @@ def render_state_md(run_dir: Path, state: dict) -> None:
         f"# Run State — {state['run_id']}",
         "",
         f"Feature: {state['feature']}",
+        f"Target agent: {state.get('target', '—')}",
         f"Mode: {state.get('mode', 'standard')}",
         f"Started: {state['started']} | Updated: {state['updated']}",
         f"Current phase: {current_phase_label(state)} | Checkpoint: {state.get('checkpoint', '—')}",
@@ -141,8 +187,12 @@ def find_phase(state: dict, selector: str) -> dict:
     raise SystemExit(f"Unknown phase selector: {selector}")
 
 
-def latest_open_run() -> Path | None:
-    """Return the most recent run directory that still has open phases."""
+def latest_open_run(target: str | None = None) -> Path | None:
+    """Return the most recent run directory that still has open phases.
+
+    When `target` is given, only runs whose recorded target agent matches it are
+    considered, so collaborators can be resumed independently.
+    """
     base = runs_dir()
     if not base.exists():
         return None
@@ -152,6 +202,8 @@ def latest_open_run() -> Path | None:
     )
     for run_dir in candidates:
         state = load_state(run_dir)
+        if target and state.get("target") != target:
+            continue
         if any(phase["status"] in OPEN_STATUSES for phase in state["phases"]):
             return run_dir
     return None

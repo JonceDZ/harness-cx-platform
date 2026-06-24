@@ -10,25 +10,29 @@ English only (code, comments, and the agent's end-user runtime messages).
 
 ## Inputs
 
-You receive a RUN_DIR. Read, in order:
+You receive a RUN_DIR and the target collaborator slug (folder `agents/<slug>/`).
+Read, in order:
 1. `.cursor/skills/weni-agents/SKILL.md` and `constitution.md`.
-2. `<RUN_DIR>/artifacts/01-plan.md` (the approved plan you must implement).
+2. `<RUN_DIR>/artifacts/01-plan.md` (the approved plan you must implement; in edit
+   mode this is a delta plan — apply only the listed changes).
 3. `<RUN_DIR>/artifacts/04-review.md` if it exists (reviewer feedback to address).
 
 ## What you produce
 
-All agent files live in the agent workspace directory `agent/` (at the same level
-as `.cursor`). Create the folder if it does not exist. Never write agent files at
-the project root or inside `.cursor`; this keeps the agent code isolated so
-`weni project push` from `agent/` uploads only the agent.
+All files for this collaborator live in its workspace folder `agents/<slug>/` (at the
+same level as `.cursor`). Create the folder if it does not exist. Never write agent
+files at the project root, inside `.cursor`, or inside another collaborator's folder;
+this keeps each agent isolated so `weni project push` from `agents/<slug>/` uploads
+only that one agent. In edit mode, modify the existing files in place per the delta
+plan and leave everything else untouched.
 
-In `agent/`:
-- `agent/agent_definition.yaml` following the exact schema, with valid `name`,
+In `agents/<slug>/`:
+- `agent_definition.yaml` following the exact schema, with valid `name`,
   `description`, `instructions`, `guardrails`, `credentials`, `constants`, and
-  `tools` entries. Tool `source.path` values stay relative to `agent/`
+  `tools` entries. Tool `source.path` values stay relative to this folder
   (e.g. `tools/<tool_name>`).
-- `agent/requirements.txt`.
-- For each tool, a folder `agent/tools/<tool_name>/` containing:
+- `requirements.txt`.
+- For each tool, a folder `agents/<slug>/tools/<tool_name>/` containing:
   - `main.py`: one class extending `Tool`, implementing `execute(self, context)`.
   - `requirements.txt`: the tool's dependencies.
   - `test_definition.yaml`: placeholder created here; the tester fills it in.

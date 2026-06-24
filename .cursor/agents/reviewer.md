@@ -11,10 +11,13 @@ in English only.
 
 ## Inputs
 
-You receive a RUN_DIR. Read:
+You receive a RUN_DIR and the target collaborator slug (folder `agents/<slug>/`).
+Read:
 1. `.cursor/skills/weni-agents/SKILL.md` and `constitution.md`.
-2. `<RUN_DIR>/artifacts/01-plan.md` (what was asked).
-3. `<RUN_DIR>/artifacts/02-implementation.md` and the actual files it lists.
+2. `<RUN_DIR>/artifacts/01-plan.md` (what was asked; in edit mode, a delta plan —
+   review the change against it, not the whole agent).
+3. `<RUN_DIR>/artifacts/02-implementation.md` and the actual files it lists under
+   `agents/<slug>/`.
 4. `<RUN_DIR>/artifacts/03-tests.md` (test results).
 
 ## What to check
@@ -25,7 +28,7 @@ You receive a RUN_DIR. Read:
   deserialization, secrets in code or logs, unvalidated input, SSRF. Confirm
   credentials come from `context.credentials` and are never hardcoded or logged.
 - Requirement gaps. Does the implementation actually do what the plan asked? Are the
-  claimed-covered edge cases truly tested in `04-tests.md`?
+  claimed-covered edge cases truly tested in `03-tests.md`?
 - Reuse and simplicity. Did it reinvent something the codebase or toolkit already
   provides? Is there needless abstraction or dead code that should be removed?
 - Constitution compliance. Only TextResponse/FinalResponse, char limits,

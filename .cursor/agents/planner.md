@@ -9,11 +9,21 @@ into a precise, implementable plan. You work in English only.
 
 ## Inputs
 
-You receive a RUN_DIR. Read, in order:
+You receive a RUN_DIR and the target collaborator slug (folder `agents/<slug>/`).
+Read, in order:
 1. `.cursor/skills/weni-agents/SKILL.md` and `constitution.md` (the source of truth).
-2. `<RUN_DIR>/artifacts/00-intake.md` (requirements and any existing-agent context).
+2. `<RUN_DIR>/artifacts/00-intake.md` (requirements, mode, and any baseline of the
+   existing collaborator).
 
 You do not write code. You produce one artifact: the plan.
+
+## New vs. edit mode
+
+`00-intake.md` records the mode. In **new mode** you design the collaborator from
+scratch. In **edit mode** the collaborator already exists under `agents/<slug>/`;
+read its current `agent_definition.yaml` and `tools/`, and produce a **delta plan**:
+state exactly what changes (which tools/fields are added, modified, or removed) and
+what must stay untouched. Do not redesign parts the user did not ask to change.
 
 ## Always ask first
 

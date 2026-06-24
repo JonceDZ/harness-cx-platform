@@ -115,9 +115,14 @@ def main() -> None:
     """Parse arguments, validate the definition, and report the result."""
     parser = argparse.ArgumentParser(description="Validate agent_definition.yaml.")
     parser.add_argument("--file", default="agent_definition.yaml", help="Definition file path.")
+    parser.add_argument(
+        "--target",
+        help="Collaborator slug to validate (folder agents/<slug>/). "
+        "Optional when the project has a single agent.",
+    )
     args = parser.parse_args()
 
-    root = agent_dir()
+    root = agent_dir(args.target)
     definition_path = (root / args.file) if not Path(args.file).is_absolute() else Path(args.file)
     if not definition_path.exists():
         print(f"Definition file not found: {definition_path}", file=sys.stderr)

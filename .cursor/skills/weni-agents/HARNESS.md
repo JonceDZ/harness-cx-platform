@@ -38,14 +38,18 @@ AGENTS.md                          # orchestrator instructions (main session)
     _common.py
   templates/STATE.template.md
   runs/<run-id>/STATE.md, artifacts/, logs/
-agent/                             # generated agent code (isolated from harness)
-  agent_definition.yaml  requirements.txt  agent_evaluation.yml  README.md
-  tools/<tool_name>/main.py, requirements.txt, test_definition.yaml, .env, .globals
+agents/                            # one folder per collaborator agent
+  <slug>/                          # generated agent code (isolated from harness)
+    agent_definition.yaml  requirements.txt  agent_evaluation.yml  README.md
+    tools/<tool_name>/main.py, requirements.txt, test_definition.yaml, .env, .globals
 ```
 
-The agent lives in `agent/` at the same level as `.cursor` so its code stays
-separate from the harness config. The repo tracks both, but you push only the agent
-to CX Platform by running `weni project push` from inside `agent/`.
+Each collaborator lives in its own `agents/<slug>/` folder at the same level as
+`.cursor` so its code stays separate from the harness config and from other
+collaborators. A project with a single agent just has one folder. The repo tracks
+everything, but you push one collaborator at a time by running
+`weni project push agent_definition.yaml` from inside `agents/<slug>/`. Every run
+targets one collaborator (`--target <slug>`, auto-detected when there is only one).
 
 ## Getting started
 
@@ -95,4 +99,4 @@ Flash (low-cost documentation). Adjust the `model` field in each
 - Everything generated is in English, including the agent's end-user messages,
   unless you explicitly ask otherwise.
 - Per-tool dependency file is `requirements.txt`.
-- Secrets for local tests live in git-ignored `agent/tools/<tool>/.env` and `.globals`.
+- Secrets for local tests live in git-ignored `agents/<slug>/tools/<tool>/.env` and `.globals`.
