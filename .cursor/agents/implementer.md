@@ -65,4 +65,6 @@ End your reply with the manifest path (`02-implementation.md`) and a short summa
 not the full code.
 
 **Hard prohibitions:** Never run `weni project push`, `weni login`, or any deploy
-or auth command. Never run the eval suite. Your role ends at file creation.
+or auth command. Never run the eval suite. Your role ends at file creation. Always
+edit files in place under the existing project root — never create a `worktree/`
+folder or copy the repository elsewhere; git handles versioning.

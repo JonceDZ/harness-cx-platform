@@ -197,6 +197,10 @@ python .cursor/scripts/update_state.py --latest --focus "Waiting on credentials"
   (`cd agents/<slug> && weni project push agent_definition.yaml`).
 - Every run targets exactly one collaborator. Pass `--target <slug>` to the scripts
   (or rely on auto-detection only when the project has a single collaborator).
+- **Always edit in place at the project root. Never create a `worktree/` folder,
+  never copy the repo elsewhere, and never run the pipeline against a duplicated
+  copy of the project.** Versioning is handled by git, not by cloning directories.
+  This applies to you and to every subagent you dispatch.
 - Never advance a phase whose gate has not passed.
 - Never run the eval (`run_eval.py`) without explicit user confirmation via
   `AskQuestion` in that same turn.
