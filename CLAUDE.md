@@ -1,12 +1,12 @@
-# Weni Agent Development Harness — Orchestrator
+# Weni Agent Development Harness — Orchestrator (Claude Code)
 
-You are the orchestrator: the main session the user talks to. You are NOT a
-subagent. Your model is chosen by the user in the Cursor model picker. This file
-defines how you coordinate the harness.
+You are the orchestrator: the main Claude Code session the user talks to. You are
+NOT a subagent. Your model is chosen by the user in the Claude Code model picker.
+This file defines how you coordinate the harness.
 
-> This is the Cursor edition of the harness. A Claude Code edition lives in
-> `CLAUDE.md` + `.claude/` and MUST be kept in sync — see **Keeping the two
-> harnesses in sync** at the end of this file.
+> This is the Claude Code edition of the harness. A Cursor edition lives in
+> `AGENTS.md` + `.cursor/` and MUST be kept in sync — see **Keeping the two harnesses
+> in sync** at the end of this file.
 
 Everything you and the subagents produce MUST be in English: code, comments, run
 artifacts, STATE.md, README, agent_definition fields, and the generated agent's
@@ -17,7 +17,8 @@ end-user runtime messages. Only switch language if the user explicitly asks.
 - You are the only role that talks to the user. Subagents never address the user.
 - You own STATE.md. Only you update it, and only via `update_state.py`.
 - You run the deterministic scripts (the token-free layer) and enforce gates.
-- You dispatch one subagent per phase, passing it the RUN_DIR and the target
+- You dispatch one subagent per phase with the Agent tool (`subagent_type` =
+  the agent name, e.g. `planner`), passing it the RUN_DIR and the target
   collaborator slug. Subagents read prior artifacts from disk; never paste artifact
   contents between briefs.
 - You keep your own context small: rely on STATE.md and artifacts, not on holding
@@ -39,36 +40,37 @@ is optional.
 
 ## The skill is the source of truth
 
-Read `.cursor/skills/weni-agents/SKILL.md` and `constitution.md` before planning.
+Read `.claude/skills/weni-agents/SKILL.md` and `constitution.md` before planning.
 All Weni rules (response types, char limits, broadcasts, events, Flows/Retail APIs)
-live there. Subagents are instructed to read them too.
+live there. Subagents are instructed to read them too. (The `weni-agents` skill also
+auto-loads in Claude Code; you can invoke it with `/weni-agents` or let it trigger.)
 
 ## Run lifecycle
 
-A run is a directory under `.cursor/runs/<run-id>/` with a live `STATE.md`
+A run is a directory under `.claude/runs/<run-id>/` with a live `STATE.md`
 snapshot, an immutable `artifacts/` history (one file per phase), and `logs/`.
 
 ### Start of every session
 
-1. Resume check: run `python .cursor/scripts/init_run.py --latest-open`.
+1. Resume check: run `python .claude/scripts/init_run.py --latest-open`.
    - If it prints a run dir, read that run's `STATE.md` (note its `Target agent`) and
      continue from the first phase whose status is `pending` or `in-progress`.
    - If it prints `NO_OPEN_RUN`, this is new work.
 2. New work — first resolve the target collaborator:
    - List existing collaborators (the subfolders under `agents/`). If any exist and
-     the request is ambiguous, ask the user with `AskQuestion` whether they want to
-     work on an existing collaborator (which one) or create a new one.
+     the request is ambiguous, ask the user with `AskUserQuestion` whether they want
+     to work on an existing collaborator (which one) or create a new one.
    - Choose the slug: for a new collaborator pick a short kebab-case slug; for an
      existing one use its folder name.
    - Decide the mode: `--mode new` to build from scratch, `--mode edit` to modify an
      existing collaborator already present under `agents/<slug>/`.
 3. Create the run with its target:
-   `python .cursor/scripts/init_run.py "<feature description>" --target <slug> --mode <new|edit>`
+   `python .claude/scripts/init_run.py "<feature description>" --target <slug> --mode <new|edit>`
    and read the returned RUN_DIR.
 
 ### Bootstrap and auth gate (before the test phase)
 
-1. Run `python .cursor/scripts/bootstrap_env.py`.
+1. Run `python .claude/scripts/bootstrap_env.py`.
 2. On `AUTHENTICATED` (exit 0): proceed.
 3. On `AUTH_REQUIRED` (exit 10): pause and ask the user to run, once, in their own
    terminal: `source .venv/bin/activate && weni login`. Do NOT run `weni login`
@@ -96,7 +98,7 @@ The pipeline stops at Docs. This harness does NOT deploy (`weni project push`).
 
 Capture the request in `00-intake.md`: goal, the target collaborator slug and mode
 (new vs. edit), target channels, whether the project uses the Retail Setup proxy or
-direct VTEX credentials, and any constraints. Use `AskQuestion` for anything
+direct VTEX credentials, and any constraints. Use `AskUserQuestion` for anything
 ambiguous.
 
 In **edit mode** (`--mode edit`), the user brings the existing collaborator into the
@@ -108,14 +110,14 @@ delta plan (a change set) rather than a from-scratch design.
 ### Phase 1 — Plan (planner, always asks)
 
 Dispatch the planner. If it returns open questions, relay them to the user with
-`AskQuestion`, write the answers into `00-intake.md`, and re-dispatch the planner.
+`AskUserQuestion`, write the answers into `00-intake.md`, and re-dispatch the planner.
 Present the final `01-plan.md` to the user and get explicit approval before
 implementing.
 
 ### Phase 2 — Implement, then validate
 
 After the implementer writes files, run
-`python .cursor/scripts/validate_schema.py --target <slug>`. If it returns
+`python .claude/scripts/validate_schema.py --target <slug>`. If it returns
 `SCHEMA_INVALID`, re-dispatch the implementer with the listed errors. Do not advance
 until `SCHEMA_VALID`. In edit mode, the implementer applies the delta plan to the
 existing `agents/<slug>/` files instead of creating everything from scratch.
@@ -125,10 +127,10 @@ existing `agents/<slug>/` files instead of creating everything from scratch.
 The tester reports which `credentials` / `constants` (globals) are required and not
 yet present in `agents/<slug>/tools/<tool>/.env` and
 `agents/<slug>/tools/<tool>/.globals`. For each missing value, ask the user with
-`AskQuestion` and write it to the correct git-ignored file.
+`AskUserQuestion` and write it to the correct git-ignored file.
 
 **Local tool tests (mandatory, before full eval):** ALWAYS run
-`python .cursor/scripts/run_tool_tests.py --target <slug>` before running
+`python .claude/scripts/run_tool_tests.py --target <slug>` before running
 `run_eval.py`. This is not optional. It runs
 `weni run agent_definition.yaml <agent> <tool> -v` for every tool and saves the
 verbose terminal output to `agents/<slug>/test-results.md`. Never use `weni run`
@@ -137,10 +139,10 @@ Use `--tool <key>` to test a single tool. In edit mode, prefer `--tool` to re-te
 only the tools affected by the change.
 
 **Eval gate (mandatory):** Before running `run_eval.py`, ask the user with
-`AskQuestion`: "The agent is implemented and validated. Do you want to run the local
-evaluation now?" Only proceed if the user confirms. If they decline, pause and wait
-for their instruction. Run it as
-`python .cursor/scripts/run_eval.py --run-dir <RUN_DIR>` — it reads the target
+`AskUserQuestion`: "The agent is implemented and validated. Do you want to run the
+local evaluation now?" Only proceed if the user confirms. If they decline, pause and
+wait for their instruction. Run it as
+`python .claude/scripts/run_eval.py --run-dir <RUN_DIR>` — it reads the target
 collaborator from the run's state automatically. Eval results are stored in
 `<RUN_DIR>/artifacts/03-tests.md`. Advance only on `EVAL_PASS`.
 
@@ -161,8 +163,9 @@ completion to the user with a short summary and the path to the generated agent.
 This is NOT part of the per-run pipeline; run it only when the user explicitly asks
 for the project-level README (it replaces the harness README in a real project).
 
-1. Collect project context from the user with `AskQuestion`: project name, business
-   purpose, target channels, and any notes you need to fill real data (never invent).
+1. Collect project context from the user with `AskUserQuestion`: project name,
+   business purpose, target channels, and any notes you need to fill real data (never
+   invent).
 2. Gather the collaborator slugs (the subfolders under `agents/`).
 3. Dispatch the docs-writer in **project mode**, passing the collected context and the
    collaborator list. It writes the root `README.md` with everything auto-filled
@@ -174,9 +177,9 @@ for the project-level README (it replaces the harness README in a real project).
 
 Each collaborator's generated files (`agent_definition.yaml`, `requirements.txt`,
 `tools/`, `agent_evaluation.yml`, `README.md`) live in its own folder
-`agents/<slug>/` at the same level as `.cursor`. This isolates agent code from the
-harness config (`.cursor`, `AGENTS.md`, `.gitignore`) and keeps collaborators
-independent of each other.
+`agents/<slug>/` at the same level as `.claude`. This isolates agent code from the
+harness config (`.claude`, `.cursor`, `CLAUDE.md`, `AGENTS.md`, `.gitignore`) and
+keeps collaborators independent of each other.
 
 ```
 agents/
@@ -194,14 +197,14 @@ a single collaborator).
 
 ```bash
 # Start a run targeting a collaborator (new or edit mode)
-python .cursor/scripts/init_run.py "feature" --target <slug> --mode new
+python .claude/scripts/init_run.py "feature" --target <slug> --mode new
 # Mark a phase in progress
-python .cursor/scripts/update_state.py --latest --phase plan --status in-progress
+python .claude/scripts/update_state.py --latest --phase plan --status in-progress
 # Mark a phase done with its artifact and a checkpoint
-python .cursor/scripts/update_state.py --latest --phase plan --status done \
+python .claude/scripts/update_state.py --latest --phase plan --status done \
   --artifact 02-plan.md --checkpoint "Plan approved"
 # Record focus / blockers
-python .cursor/scripts/update_state.py --latest --focus "Waiting on credentials" \
+python .claude/scripts/update_state.py --latest --focus "Waiting on credentials" \
   --add-blocker "Missing VTEX app key"
 ```
 
@@ -212,7 +215,7 @@ python .cursor/scripts/update_state.py --latest --focus "Waiting on credentials"
 - Never edit STATE.md by hand; always use `update_state.py`.
 - **Never run `weni login` or any interactive auth command.**
 - **Never run `weni project push` or any deploy command unless the user explicitly
-  confirms via `AskQuestion` in that same turn. A past approval does not count. If
+  confirms via `AskUserQuestion` in that same turn. A past approval does not count. If
   in doubt, ask again.** Push is per collaborator, from inside its folder
   (`cd agents/<slug> && weni project push agent_definition.yaml`).
 - Every run targets exactly one collaborator. Pass `--target <slug>` to the scripts
@@ -220,10 +223,11 @@ python .cursor/scripts/update_state.py --latest --focus "Waiting on credentials"
 - **Always edit in place at the project root. Never create a `worktree/` folder,
   never copy the repo elsewhere, and never run the pipeline against a duplicated
   copy of the project.** Versioning is handled by git, not by cloning directories.
-  This applies to you and to every subagent you dispatch.
+  This applies to you and to every subagent you dispatch. (Background isolation is
+  disabled in `.claude/settings.json` for this reason — do not re-enable it.)
 - Never advance a phase whose gate has not passed.
 - Never run the eval (`run_eval.py`) without explicit user confirmation via
-  `AskQuestion` in that same turn.
+  `AskUserQuestion` in that same turn.
 - Keep STATE.md under ~100 lines and always current.
 - **Always run `run_tool_tests.py` before `run_eval.py`.** Never substitute a
   direct `weni run` terminal call. The script is mandatory and produces the
@@ -236,7 +240,7 @@ either Cursor or Claude Code:
 
 | Concern        | Cursor edition            | Claude Code edition          |
 |----------------|---------------------------|------------------------------|
-| Orchestrator   | `AGENTS.md` (this file)   | `CLAUDE.md`                  |
+| Orchestrator   | `AGENTS.md`               | `CLAUDE.md` (this file)      |
 | Subagents      | `.cursor/agents/*.md`     | `.claude/agents/*.md`        |
 | Skill          | `.cursor/skills/`         | `.claude/skills/`            |
 | Scripts        | `.cursor/scripts/*.py`    | `.claude/scripts/*.py`       |
@@ -245,8 +249,8 @@ either Cursor or Claude Code:
 | Config         | (Cursor model picker)     | `.claude/settings.json`      |
 
 **Rule: any change to one edition MUST be mirrored into the other in the same change,
-adapting to that harness's syntax.** Edit both `AGENTS.md` and `CLAUDE.md`; edit the
-matching file under both `.cursor/` and `.claude/`. The two editions must stay
+adapting to that harness's syntax.** Edit both `CLAUDE.md` and `AGENTS.md`; edit the
+matching file under both `.claude/` and `.cursor/`. The two editions must stay
 behaviorally identical.
 
 When mirroring, translate the differences instead of copying verbatim:
@@ -257,22 +261,21 @@ When mirroring, translate the differences instead of copying verbatim:
   allows others. Use this mapping and keep the cost intent (Opus for planning, a
   capable mid model for build/test/review, a cheap model for docs):
 
-  | Role        | Cursor `model:`            | Claude Code `model:` |
-  |-------------|----------------------------|----------------------|
-  | planner     | `claude-opus-4.8`          | `opus`               |
-  | implementer | `composer-2.5[fast=false]` | `sonnet`             |
-  | tester      | `composer-2.5[fast=false]` | `sonnet`             |
-  | reviewer    | `composer-2.5[fast=false]` | `sonnet`             |
-  | docs-writer | `gemini-3-flash`           | `haiku`              |
+  | Role        | Cursor `model:`          | Claude Code `model:` |
+  |-------------|--------------------------|----------------------|
+  | planner     | `claude-opus-4.8`        | `opus`               |
+  | implementer | `composer-2.5[fast=false]` | `sonnet`           |
+  | tester      | `composer-2.5[fast=false]` | `sonnet`           |
+  | reviewer    | `composer-2.5[fast=false]` | `sonnet`           |
+  | docs-writer | `gemini-3-flash`         | `haiku`              |
 
 - **Read-only subagents.** Cursor uses `readonly: true` in frontmatter. Claude Code
   has no such field — restrict capability with the `tools:` allowlist instead (e.g.
   the reviewer gets `Read, Grep, Glob, Write` and no `Edit`, and the brief states it
   may only write the review artifact).
-- **Other frontmatter.** Cursor subagents use `name`, `description`, `model`, and
-  `readonly`. Claude Code subagents use `name`, `description`, `tools`
-  (comma/space-separated allowlist; omit to inherit all), and `model`. Keep the
-  `description` text identical across editions.
+- **Other frontmatter.** Claude Code subagents use `name`, `description`, `tools`
+  (comma/space-separated allowlist; omit to inherit all), and `model`. Skills use
+  `name` + `description`. Keep `description` text identical across editions.
 - **User questions.** Cursor's `AskQuestion` ⇄ Claude Code's `AskUserQuestion`.
 - **Scripts** are plain Python and identical except for the `.cursor`/`.claude` paths
   inside them; mirror logic changes to both copies.

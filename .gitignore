@@ -7,6 +7,7 @@
 
 # Run logs (state snapshots and artifacts are kept; logs are not)
 .cursor/runs/*/logs/
+.claude/runs/*/logs/
 
 # Python
 __pycache__/
