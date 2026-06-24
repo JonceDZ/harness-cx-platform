@@ -131,5 +131,4 @@ Each subagent model is set in `.cursor/agents/*.md` (`model:` in the YAML frontm
 ## More detail
 
 - Orchestrator behavior: [`AGENTS.md`](AGENTS.md)
-- Harness usage and layout: [`.cursor/skills/weni-agents/HARNESS.md`](.cursor/skills/weni-agents/HARNESS.md)
 - Weni agent rules and API reference: [`.cursor/skills/weni-agents/SKILL.md`](.cursor/skills/weni-agents/SKILL.md)
