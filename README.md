@@ -4,6 +4,33 @@ A Cursor-based harness for building [Weni AI agents](https://weni.ai) through a 
 
 A project can hold one or many **collaborator agents**. Each collaborator is an independent deploy unit with its own `agent_definition.yaml`, living in `agents/<slug>/`. Every run targets one collaborator (`--target <slug>`), so the same harness handles a single agent and a multi-collaborator project the same way.
 
+## Using this harness in your project
+
+### Starting a new project
+
+1. Clone or copy this repo.
+2. Delete the harness `README.md` and `.git/` — they belong to the harness, not your project:
+   ```bash
+   rm README.md
+   rm -rf .git
+   git init  # start a fresh repo for your project
+   ```
+3. Bootstrap, open in Cursor, and describe your first collaborator. The harness creates `agents/<slug>/` for you.
+
+### Adding it to an existing project
+
+1. Copy `.cursor/`, `AGENTS.md`, and `.gitignore` into your existing repo root.
+2. If you already have agent code, move it to `agents/<slug>/` with the expected structure (`agent_definition.yaml`, `tools/`, etc.).
+3. To modify an agent already deployed on Weni: copy its files into `agents/<slug>/` manually, then tell the orchestrator you want to edit it.
+4. Bootstrap and open in Cursor.
+
+In both cases run once before starting:
+```bash
+python .cursor/scripts/bootstrap_env.py
+```
+
+---
+
 ## Quick start
 
 1. **Copy the harness into your project root** (or start from this repo):
