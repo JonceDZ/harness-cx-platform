@@ -5,9 +5,11 @@
 **/.env
 **/.globals
 
-# Run logs (state snapshots and artifacts are kept; logs are not)
-.cursor/runs/*/logs/
-.claude/runs/*/logs/
+# Harnesses
+.cursor/
+.claude/
+AGENTS.md
+CLAUDE.md
 
 # Python
 __pycache__/
